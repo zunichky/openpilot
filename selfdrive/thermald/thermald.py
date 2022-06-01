@@ -145,7 +145,8 @@ def hw_state_thread(end_event, hw_queue):
           registered_count = 0
 
         # TODO: remove this once the config is in AGNOS
-        if not modem_configured and len(HARDWARE.get_sim_info().get('sim_id', '')) > 0:
+        sim_info = HARDWARE.get_sim_info()
+        if not modem_configured and sim_info is not None and len(sim_info.get('sim_id', '')) > 0:
           cloudlog.warning("configuring modem")
           HARDWARE.configure_modem()
           modem_configured = True

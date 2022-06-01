@@ -88,7 +88,7 @@ class Tici(HardwareBase):
       return f.read().strip()
 
   def get_device_type(self):
-    return "tici"
+    return "sici"
 
   def get_sound_card_online(self):
     return (os.path.isfile('/proc/asound/card0/state') and
@@ -115,94 +115,102 @@ class Tici(HardwareBase):
         return NetworkType.ethernet
       elif primary_type == '802-11-wireless':
         return NetworkType.wifi
-      else:
-        active_connections = self.nm.Get(NM, 'ActiveConnections', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
-        for conn in active_connections:
-          c = self.bus.get_object(NM, conn)
-          tp = c.Get(NM_CON_ACT, 'Type', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
-          if tp == 'gsm':
-            modem = self.get_modem()
-            access_t = modem.Get(MM_MODEM, 'AccessTechnologies', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
-            if access_t >= MM_MODEM_ACCESS_TECHNOLOGY_LTE:
-              return NetworkType.cell4G
-            elif access_t >= MM_MODEM_ACCESS_TECHNOLOGY_UMTS:
-              return NetworkType.cell3G
-            else:
-              return NetworkType.cell2G
+      # else:
+      #   active_connections = self.nm.Get(NM, 'ActiveConnections', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+      #   for conn in active_connections:
+      #     c = self.bus.get_object(NM, conn)
+      #     tp = c.Get(NM_CON_ACT, 'Type', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+      #     if tp == 'gsm':
+      #       modem = self.get_modem()
+      #       access_t = modem.Get(MM_MODEM, 'AccessTechnologies', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+      #       if access_t >= MM_MODEM_ACCESS_TECHNOLOGY_LTE:
+      #         return NetworkType.cell4G
+      #       elif access_t >= MM_MODEM_ACCESS_TECHNOLOGY_UMTS:
+      #         return NetworkType.cell3G
+      #       else:
+      #         return NetworkType.cell2G
     except Exception:
       pass
 
     return NetworkType.none
 
   def get_modem(self):
-    objects = self.mm.GetManagedObjects(dbus_interface="org.freedesktop.DBus.ObjectManager", timeout=TIMEOUT)
-    modem_path = list(objects.keys())[0]
-    return self.bus.get_object(MM, modem_path)
+    return None
+
+    # objects = self.mm.GetManagedObjects(dbus_interface="org.freedesktop.DBus.ObjectManager", timeout=TIMEOUT)
+    # modem_path = list(objects.keys())[0]
+    # return self.bus.get_object(MM, modem_path)
 
   def get_wlan(self):
     wlan_path = self.nm.GetDeviceByIpIface('wlan0', dbus_interface=NM, timeout=TIMEOUT)
     return self.bus.get_object(NM, wlan_path)
 
   def get_sim_info(self):
-    modem = self.get_modem()
-    sim_path = modem.Get(MM_MODEM, 'Sim', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+    return None
 
-    if sim_path == "/":
-      return {
-        'sim_id': '',
-        'mcc_mnc': None,
-        'network_type': ["Unknown"],
-        'sim_state': ["ABSENT"],
-        'data_connected': False
-      }
-    else:
-      sim = self.bus.get_object(MM, sim_path)
-      return {
-        'sim_id': str(sim.Get(MM_SIM, 'SimIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)),
-        'mcc_mnc': str(sim.Get(MM_SIM, 'OperatorIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)),
-        'network_type': ["Unknown"],
-        'sim_state': ["READY"],
-        'data_connected': modem.Get(MM_MODEM, 'State', dbus_interface=DBUS_PROPS, timeout=TIMEOUT) == MM_MODEM_STATE.CONNECTED,
-      }
+    # modem = self.get_modem()
+    # sim_path = modem.Get(MM_MODEM, 'Sim', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+
+    # if sim_path == "/":
+    #   return {
+    #     'sim_id': '',
+    #     'mcc_mnc': None,
+    #     'network_type': ["Unknown"],
+    #     'sim_state': ["ABSENT"],
+    #     'data_connected': False
+    #   }
+    # else:
+    #   sim = self.bus.get_object(MM, sim_path)
+    #   return {
+    #     'sim_id': str(sim.Get(MM_SIM, 'SimIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)),
+    #     'mcc_mnc': str(sim.Get(MM_SIM, 'OperatorIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)),
+    #     'network_type': ["Unknown"],
+    #     'sim_state': ["READY"],
+    #     'data_connected': modem.Get(MM_MODEM, 'State', dbus_interface=DBUS_PROPS, timeout=TIMEOUT) == MM_MODEM_STATE.CONNECTED,
+    #   }
 
   def get_subscriber_info(self):
     return ""
 
   def get_imei(self, slot):
-    if slot != 0:
-      return ""
+    return ""
 
-    return str(self.get_modem().Get(MM_MODEM, 'EquipmentIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT))
+    # if slot != 0:
+    #   return ""
+
+    # return str(self.get_modem().Get(MM_MODEM, 'EquipmentIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT))
 
   def get_network_info(self):
-    modem = self.get_modem()
-    try:
-      info = modem.Command("AT+QNWINFO", math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
-      extra = modem.Command('AT+QENG="servingcell"', math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
-      state = modem.Get(MM_MODEM, 'State', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
-    except Exception:
-      return None
+    return None
+    
+    # modem = self.get_modem()
+    # try:
+    #   info = modem.Command("AT+QNWINFO", math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
+    #   extra = modem.Command('AT+QENG="servingcell"', math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
+    #   state = modem.Get(MM_MODEM, 'State', dbus_interface=DBUS_PROPS, timeout=TIMEOUT)
+    # except Exception:
+    #   return None
 
-    if info and info.startswith('+QNWINFO: '):
-      info = info.replace('+QNWINFO: ', '').replace('"', '').split(',')
-      extra = "" if extra is None else extra.replace('+QENG: "servingcell",', '').replace('"', '')
-      state = "" if state is None else MM_MODEM_STATE(state).name
+    # if info and info.startswith('+QNWINFO: '):
+    #   info = info.replace('+QNWINFO: ', '').replace('"', '').split(',')
+    #   extra = "" if extra is None else extra.replace('+QENG: "servingcell",', '').replace('"', '')
+    #   state = "" if state is None else MM_MODEM_STATE(state).name
 
-      if len(info) != 4:
-        return None
+    #   if len(info) != 4:
+    #     return None
 
-      technology, operator, band, channel = info
+    #   technology, operator, band, channel = info
 
-      return({
-        'technology': technology,
-        'operator': operator,
-        'band': band,
-        'channel': int(channel),
-        'extra': extra,
-        'state': state,
-      })
-    else:
-      return None
+    #   return({
+    #     'technology': technology,
+    #     'operator': operator,
+    #     'band': band,
+    #     'channel': int(channel),
+    #     'extra': extra,
+    #     'state': state,
+    #   })
+    # else:
+    #   return None
 
   def parse_strength(self, percentage):
     if percentage < 25:
@@ -455,24 +463,26 @@ class Tici(HardwareBase):
     sudo_write("Y", "/sys/kernel/debug/msm_vidc/disable_thermal_mitigation")
 
   def configure_modem(self):
-    sim_id = self.get_sim_info().get('sim_id', '')
+    return
 
-    # configure modem as data-centric
-    cmds = [
-      'AT+QNVW=5280,0,"0102000000000000"',
-      'AT+QNVFW="/nv/item_files/ims/IMS_enable",00',
-      'AT+QNVFW="/nv/item_files/modem/mmode/ue_usage_setting",01',
-    ]
-    modem = self.get_modem()
-    for cmd in cmds:
-      try:
-        modem.Command(cmd, math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
-      except Exception:
-        pass
+    # sim_id = self.get_sim_info().get('sim_id', '')
 
-    # blue prime config
-    if sim_id.startswith('8901410'):
-      os.system('mmcli -m 0 --3gpp-set-initial-eps-bearer-settings="apn=Broadband"')
+    # # configure modem as data-centric
+    # cmds = [
+    #   'AT+QNVW=5280,0,"0102000000000000"',
+    #   'AT+QNVFW="/nv/item_files/ims/IMS_enable",00',
+    #   'AT+QNVFW="/nv/item_files/modem/mmode/ue_usage_setting",01',
+    # ]
+    # modem = self.get_modem()
+    # for cmd in cmds:
+    #   try:
+    #     modem.Command(cmd, math.ceil(TIMEOUT), dbus_interface=MM_MODEM, timeout=TIMEOUT)
+    #   except Exception:
+    #     pass
+
+    # # blue prime config
+    # if sim_id.startswith('8901410'):
+    #   os.system('mmcli -m 0 --3gpp-set-initial-eps-bearer-settings="apn=Broadband"')
 
   def get_networks(self):
     r = {}
