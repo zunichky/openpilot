@@ -195,14 +195,15 @@ FW_VERSIONS = {
     ],
     # (Ecu.transmission, 0x7e1, None): [
     #  b'\xf1\x3200000000XX',  # placeholder
-    # b'68504640AC',
-    # b'68538041AB',
-    # b'68475153AD',
+      #b'68504640AC',
+      #b'68538041AB',
+      #b'68475153AD',
+    #],
+    # (Ecu.gateway, 0x18DACBF1, None): [
+    #   b'68488419AB',
+    #   b'68535476AB',
+    #   b'68535476AC',
     # ],
-    (Ecu.gateway, 0x18DACBF1, None): [
-      b'68488419AB',
-      b'68535476AB',
-    ],
   },
 }
 
