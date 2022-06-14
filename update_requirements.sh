@@ -3,7 +3,7 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 cd $DIR
-
+ls
 if ! command -v "pyenv" > /dev/null 2>&1; then
   echo "pyenv install ..."
   curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
@@ -29,7 +29,6 @@ pip install pip==21.3.1
 pip install poetry
 
 if [ -d "./xx" ]; then
-  poetry config virtualenvs.create false && \
   export POETRY_SYSTEM=1
 fi
 
@@ -37,6 +36,7 @@ if [ -z "$POETRY_SYSTEM" ]; then
   echo "PYTHONPATH=${PWD}" > .env
   RUN="poetry run"
 else
+  poetry config virtualenvs.create false
   RUN=""
 fi
 
