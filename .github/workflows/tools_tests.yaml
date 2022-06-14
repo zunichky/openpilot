@@ -54,12 +54,12 @@ jobs:
     - name: Build openpilot
       run: |
         source tools/openpilot_env.sh
-        pipenv run scons -j$(nproc) --extras --test
+        poetry run scons -j$(nproc) --extras --test
     - name: Cleanup scons cache
       run: |
         source tools/openpilot_env.sh
         rm -rf /tmp/scons_cache/*
-        pipenv run scons -j$(nproc) --extras --test --cache-populate
+        poetry run scons -j$(nproc) --extras --test --cache-populate
 
   plotjuggler:
     name: plotjuggler
