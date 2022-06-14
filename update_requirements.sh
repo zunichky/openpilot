@@ -26,7 +26,7 @@ eval "$(pyenv init --path)"
 
 echo "update pip"
 pip install pip==21.3.1
-pip install poetry==2021.11.23
+pip install poetry
 
 if [ -d "./xx" ]; then
   export PIPENV_SYSTEM=1
