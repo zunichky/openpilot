@@ -68,7 +68,7 @@ class Laikad:
       pos_std = np.sqrt(abs(self.gnss_kf.P[GStates.ECEF_POS].diagonal())).tolist()
       vel_std = np.sqrt(abs(self.gnss_kf.P[GStates.ECEF_VELOCITY].diagonal())).tolist()
 
-      bearing_deg, bearing_std = get_bearing_from_gnss(ecef_pos, ecef_vel, vel_std)
+      orientation, bearing_std = get_bearing_from_gnss(ecef_pos, ecef_vel, vel_std)
 
       meas_msgs = [create_measurement_msg(m) for m in corrected_measurements]
       dat = messaging.new_message("gnssMeasurements")
@@ -76,7 +76,7 @@ class Laikad:
       dat.gnssMeasurements = {
         "positionECEF": measurement_msg(value=ecef_pos, std=pos_std, valid=kf_valid),
         "velocityECEF": measurement_msg(value=ecef_vel, std=vel_std, valid=kf_valid),
-        "bearingDeg": measurement_msg(value=[bearing_deg], std=[bearing_std], valid=kf_valid),
+        "orientationECEF": measurement_msg(value=[orientation], std=[bearing_std], valid=kf_valid),
         "ubloxMonoTime": ublox_mono_time,
         "correctedMeasurements": meas_msgs
       }
@@ -188,7 +188,13 @@ def get_bearing_from_gnss(ecef_pos, ecef_vel, vel_std):
   converter = coord.LocalCoord.from_ecef(ecef_pos)
 
   ned_vel = np.einsum('ij,j ->i', converter.ned_from_ecef_matrix, ecef_vel)
+  # y, x
   bearing = np.arctan2(ned_vel[1], ned_vel[0])
+  # z, x should be pitch/y ?
+  # pitch = np.arctan2(ned_vel[2], ned_vel[0])
+  # z, y should be roll/x?
+  # roll = np.arctan2(ned_vel[2], ned_vel[1])
+
   bearing_std = np.arctan2(np.linalg.norm(vel_std), np.linalg.norm(ned_vel))
   return float(np.rad2deg(bearing)), float(bearing_std)
 
