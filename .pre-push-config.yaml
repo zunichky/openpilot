@@ -1,0 +1,7 @@
+-   repo: local
+    hooks:
+    -   id: push-warning
+        name: push-warning
+        entry: prepush.sh
+        language: script
+        pass_filenames: false
