@@ -5,6 +5,7 @@
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 PROTECTED_BRANCHES="^(master|push_warning|release-*)"
 
+echo "Push aborted."
 if [[ "$BRANCH" =~ $PROTECTED_BRANCHES ]]; then
   read -p "Are you sure you want to push to \"$BRANCH\" ? (y/n): " -n 1 -r < /dev/tty
   echo
