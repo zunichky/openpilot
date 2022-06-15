@@ -1,3 +1,4 @@
+#!/bin/bash
 # Warn before pushing to protected branches
 # Bypass with git push --no-verify
 
