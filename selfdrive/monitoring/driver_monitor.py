@@ -88,17 +88,21 @@ def face_orientation_from_net(angles_desc, pos_desc, rpy_calib):
   pitch_focal_angle = atan2(face_pixel_position[1] - H//2, EFL)
 
   pitch = pitch_net + pitch_focal_angle
+  pitchnc = pitch_net + pitch_focal_angle
   yaw = -yaw_net + yaw_focal_angle
+  yawnc = -yaw_net + yaw_focal_angle
 
   # no calib for roll
   pitch -= rpy_calib[1]
   yaw -= rpy_calib[2]
-  return roll_net, pitch, yaw
+  return roll_net, pitch, yaw, pitchnc, yawnc
 
 class DriverPose():
   def __init__(self, max_trackable):
     self.yaw = 0.
+    self.yawnc = 0.
     self.pitch = 0.
+    self.pitchnc = 0.
     self.roll = 0.
     self.yaw_std = 0.
     self.pitch_std = 0.
@@ -239,7 +243,7 @@ class DriverStatus():
       return
 
     self.face_detected = driver_data.faceProb > self.settings._FACE_THRESHOLD
-    self.pose.roll, self.pose.pitch, self.pose.yaw = face_orientation_from_net(driver_data.faceOrientation, driver_data.facePosition, cal_rpy)
+    self.pose.roll, self.pose.pitch, self.pose.yaw, self.pose.pitchnc, self.pose.yawnc = face_orientation_from_net(driver_data.faceOrientation, driver_data.facePosition, cal_rpy)
     if self.wheel_on_right:
       self.pose.yaw *= -1
     self.pose.pitch_std = driver_data.faceOrientationStd[0]

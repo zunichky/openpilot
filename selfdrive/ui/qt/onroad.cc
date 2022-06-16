@@ -297,6 +297,9 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
   painter.save();
 
   const UIScene &scene = s->scene;
+  painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7));
+  painter.drawPolygon(scene.dmpp1.v, 4);
+  painter.drawPolygon(scene.dmpy1.v, 4);
   // lanelines
   for (int i = 0; i < std::size(scene.lane_line_vertices); ++i) {
     painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, std::clamp<float>(scene.lane_line_probs[i], 0.0, 0.7)));
