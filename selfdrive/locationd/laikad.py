@@ -247,16 +247,14 @@ class EphemerisSourceType(IntEnum):
 
 
 def main():
-  sm = messaging.SubMaster(['ubloxGnss'])
+  ublox_gnss_sock = messaging.sub_sock('ubloxGnss')
   pm = messaging.PubMaster(['gnssMeasurements'])
   # todo get last_known_position
   laikad = Laikad(save_ephemeris=True)
-  while True:
-    sm.update()
 
-    if sm.updated['ubloxGnss']:
-      ublox_msg = sm['ubloxGnss']
-      msg = laikad.process_ublox_msg(ublox_msg, sm.logMonoTime['ubloxGnss'])
+  while True:
+    for m in messaging.drain_sock(ublox_gnss_sock, wait_for_one=False):
+      msg = laikad.process_ublox_msg(m.ubloxGnss, m.logMonoTime)
       if msg is not None:
         pm.send('gnssMeasurements', msg)
 
