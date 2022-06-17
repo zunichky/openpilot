@@ -146,18 +146,18 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
   p.setPen(QColor(0xff, 0xff, 0xff));
   p.setRenderHint(QPainter::TextAntialiasing);
   if (alert.size == cereal::ControlsState::AlertSize::SMALL) {
-    configFont(p, "Open Sans", 74, "SemiBold");
+    configFont(p, "Inter", 74, "SemiBold");
     p.drawText(r, Qt::AlignCenter, alert.text1);
   } else if (alert.size == cereal::ControlsState::AlertSize::MID) {
-    configFont(p, "Open Sans", 88, "Bold");
+    configFont(p, "Inter", 88, "Bold");
     p.drawText(QRect(0, c.y() - 125, width(), 150), Qt::AlignHCenter | Qt::AlignTop, alert.text1);
-    configFont(p, "Open Sans", 66, "Regular");
+    configFont(p, "Inter", 66, "Regular");
     p.drawText(QRect(0, c.y() + 21, width(), 90), Qt::AlignHCenter, alert.text2);
   } else if (alert.size == cereal::ControlsState::AlertSize::FULL) {
     bool l = alert.text1.length() > 15;
-    configFont(p, "Open Sans", l ? 132 : 177, "Bold");
+    configFont(p, "Inter", l ? 132 : 177, "Bold");
     p.drawText(QRect(0, r.y() + (l ? 240 : 270), width(), 600), Qt::AlignHCenter | Qt::TextWordWrap, alert.text1);
-    configFont(p, "Open Sans", 88, "Regular");
+    configFont(p, "Inter", 88, "Regular");
     p.drawText(QRect(0, r.height() - (l ? 361 : 420), width(), 300), Qt::AlignHCenter | Qt::TextWordWrap, alert.text2);
   }
 }
@@ -248,7 +248,7 @@ void NvgWindow::drawHud(QPainter &p) {
   } else {
     p.setPen(QColor(0x72, 0x72, 0x72, 0xff));
   }
-  configFont(p, "Open Sans", 90, "Bold");
+  configFont(p, "Inter", 90, "Bold");
   QRect speed_rect = getTextRect(p, Qt::AlignCenter, setSpeedStr);
   speed_rect.moveCenter({set_speed_rect.center().x(), 0});
   speed_rect.moveTop(set_speed_rect.top() + 8);
@@ -272,7 +272,7 @@ void NvgWindow::drawHud(QPainter &p) {
   } else {
     p.setPen(QColor(0xa6, 0xa6, 0xa6, 0xff));
   }
-  configFont(p, "Open Sans", 40, "SemiBold");
+  configFont(p, "Inter", 40, "SemiBold");
   QRect max_rect = getTextRect(p, Qt::AlignCenter, "MAX");
   max_rect.moveCenter({set_speed_rect.center().x(), 0});
   max_rect.moveTop(set_speed_rect.top() + 123);
@@ -297,7 +297,7 @@ void NvgWindow::drawHud(QPainter &p) {
     p.drawRoundedRect(sign_rect, 16, 16);
 
     // "SPEED"
-    configFont(p, "Open Sans", 28, "SemiBold");
+    configFont(p, "Inter", 28, "SemiBold");
     QRect text_speed_rect = getTextRect(p, Qt::AlignCenter, "SPEED");
     text_speed_rect.moveCenter({sign_rect.center().x(), 0});
     text_speed_rect.moveTop(sign_rect_outer.top() + 20);
@@ -310,7 +310,7 @@ void NvgWindow::drawHud(QPainter &p) {
     p.drawText(text_limit_rect, Qt::AlignCenter, "LIMIT");
 
     // Speed limit value
-    configFont(p, "Open Sans", 70, "Bold");
+    configFont(p, "Inter", 70, "Bold");
     QRect speed_limit_rect = getTextRect(p, Qt::AlignCenter, speedLimitStr);
     speed_limit_rect.moveCenter({sign_rect.center().x(), 0});
     speed_limit_rect.moveTop(sign_rect.top() + 70);
@@ -335,7 +335,7 @@ void NvgWindow::drawHud(QPainter &p) {
 
     // Speed limit value
     int font_size = (speedLimitStr.size() >= 3) ? 62 : 70;
-    configFont(p, "Open Sans", font_size, "Bold");
+    configFont(p, "Inter", font_size, "Bold");
     QRect speed_limit_rect = getTextRect(p, Qt::AlignCenter, speedLimitStr);
     speed_limit_rect.moveCenter(center);
     p.setPen(blackColor());
@@ -343,9 +343,9 @@ void NvgWindow::drawHud(QPainter &p) {
   }
 
   // current speed
-  configFont(p, "Open Sans", 176, "Bold");
+  configFont(p, "Inter", 176, "Bold");
   drawText(p, rect().center().x(), 210, speedStr);
-  configFont(p, "Open Sans", 66, "Regular");
+  configFont(p, "Inter", 66, "Regular");
   drawText(p, rect().center().x(), 290, speedUnit, 200);
 
   // engage-ability icon
