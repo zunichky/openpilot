@@ -253,7 +253,7 @@ def main():
   laikad = Laikad(save_ephemeris=True)
 
   while True:
-    for m in messaging.drain_sock(ublox_gnss_sock, wait_for_one=False):
+    for m in messaging.drain_sock(ublox_gnss_sock, wait_for_one=True):
       msg = laikad.process_ublox_msg(m.ubloxGnss, m.logMonoTime)
       if msg is not None:
         pm.send('gnssMeasurements', msg)
