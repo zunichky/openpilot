@@ -54,7 +54,7 @@ class CarController:
       interceptor_gas_cmd = 0.
       start_boost = interp(CS.out.vEgo, [CREEP_SPEED, CREEP_SPEED * 2], [0.6, 0.0])
       is_accelerating = interp(actuators.accel, [0.0, 0.4], [0.0, 1.0])
-      pcm_accel_cmd_boost = start_boost * is_accelerating
+      pcm_accel_cmd_boost = 0  # start_boost * is_accelerating
 
       # if CS.out.standstill and pcm_accel_cmd > 0.0:
       #   # TODO: find minimum acceleration all Toyotas start moving at

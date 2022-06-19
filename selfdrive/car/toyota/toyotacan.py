@@ -1,3 +1,6 @@
+import os.path
+
+
 def create_steer_command(packer, steer, steer_req, raw_cnt):
   """Creates a CAN message for the Toyota Steer Command."""
 
@@ -30,14 +33,22 @@ def create_lta_steer_command(packer, steer, steer_req, raw_cnt):
 
 def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_type):
   # TODO: find the exact canceling bit that does not create a chime
+  try:
+    with open('/data/alt_accel', 'r') as f:
+      alt_accel = float(f.read().strip())
+  except:
+    alt_accel = 0
+  mystery_bit = int(os.path.exists('/data/myst'))
   values = {
     "ACCEL_CMD": accel,
+    "ACCEL_CMD_ALT": alt_accel,
     "ACC_TYPE": acc_type,
     "DISTANCE": 0,
     "MINI_CAR": lead,
     "PERMIT_BRAKING": 1,
     "RELEASE_STANDSTILL": not standstill_req,
     "CANCEL_REQ": pcm_cancel,
+    "MYSTERY_BIT": mystery_bit,  # TODO: see if this does anything
     "ALLOW_LONG_PRESS": 1,
   }
   return packer.make_can_msg("ACC_CONTROL", 0, values)
