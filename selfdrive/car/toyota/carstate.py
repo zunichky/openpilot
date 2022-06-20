@@ -24,9 +24,13 @@ class CarState(CarStateBase):
 
     self.low_speed_lockout = False
     self.acc_type = 1
+    self.dsu_cruise = False
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
+
+    if self.CP.carFingerprint in TSS2_CAR:
+      self.dsu_cruise = cp_cam.vl["DSU_CRUISE"]
 
     ret.doorOpen = any([cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FR"],
                         cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RR"]])
@@ -243,5 +247,18 @@ class CarState(CarStateBase):
         ("ACC_CONTROL", 33),
         ("ACC_HUD", 1),
       ]
+
+    if CP.carFingerprint in TSS2_CAR:
+      signals.append(("MAIN_ON", "DSU_CRUISE"))
+      signals.append(("SET_SPEED", "DSU_CRUISE"))
+      signals.append(("RES_BTN", "DSU_CRUISE"))
+      signals.append(("SET_BTN", "DSU_CRUISE"))
+      signals.append(("CANCEL_BTN", "DSU_CRUISE"))
+      signals.append(("MAIN_ON", "DSU_CRUISE"))
+      signals.append(("SET_SPEED", "DSU_CRUISE"))
+      signals.append(("CRUISE_REQUEST", "DSU_CRUISE"))
+      signals.append(("LEAD_DISTANCE", "DSU_CRUISE"))
+
+      checks.append(("DSU_CRUISE", 5))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
