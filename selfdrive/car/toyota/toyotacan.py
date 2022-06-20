@@ -36,6 +36,7 @@ def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_ty
     "DISTANCE": 0,
     "MINI_CAR": lead,
     "PERMIT_BRAKING": 1 if accel <= 0.2 or standstill else 0,
+    "MYSTERY_BIT": 1 if accel <= 0 else 0,
     "RELEASE_STANDSTILL": not standstill_req,
     "CANCEL_REQ": pcm_cancel,
     "ALLOW_LONG_PRESS": 1,
