@@ -29,7 +29,6 @@ def create_lta_steer_command(packer, steer, steer_req, raw_cnt):
 
 
 def create_dsu_cruise_command(packer, dsu_cruise, pcm_cancel):
-  dsu_cruise["CANCEL_BTN"] = pcm_cancel
   dsu_cruise["LEAD_DISTANCE"] = 20
   return packer.make_can_msg("DSU_CRUISE", 0, dsu_cruise)
 
@@ -45,7 +44,7 @@ def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_ty
     "PERMIT_BRAKING": 1 if accel <= 0.2 or standstill else 0,
     "MYSTERY_BIT": 1 if a_ego > accel else 0,
     "RELEASE_STANDSTILL": not standstill_req,
-    # "CANCEL_REQ": pcm_cancel,
+    "CANCEL_REQ": pcm_cancel,
     "ALLOW_LONG_PRESS": 1,
   }
   return packer.make_can_msg("ACC_CONTROL", 0, values)
