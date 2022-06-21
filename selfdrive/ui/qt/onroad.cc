@@ -358,8 +358,8 @@ void NvgWindow::drawHud(QPainter &p, const UIState *s) {
 
   // dm icon
   if (!hideDM) {
-    drawIcon(p, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2,
-             dm_img, blackColor(70), dmActive ? 1.0 : 0.2);
+    // drawIcon(p, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2,
+    //          dm_img, blackColor(70), dmActive ? 1.0 : 0.2);
     drawDriverState(p, s, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2);
   }
   p.restore();
@@ -492,61 +492,88 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
 
   const UIScene &scene = s->scene;
 
-  float real_angle = std::atan2(scene.dm_py, scene.dm_pp);
-  if (scene.dm_py < 0) {
-    real_angle += 2 * 3.1416;
-  }
-  // printf("py, pp = %.2f, %.2f \n", scene.dm_py, scene.dm_pp);
-  // printf("real angle = %.3f \n", real_angle / 3.1416 * 180);
+  printf("py, pp = %.2f, %.2f \n", scene.dm_py, scene.dm_pp);
 
-  float real_amp = std::sqrt(scene.dm_py * scene.dm_py + scene.dm_pp * scene.dm_pp);
-  float amp = 9 * real_amp / 0.18;
+  // float real_amp = std::sqrt(scene.dm_py * scene.dm_py + scene.dm_pp * scene.dm_pp);
+  // float amp = 9 * real_amp / 0.18;
 
-  int n_spikes = 44;
-  float angle_step = 2 * 3.1416 / n_spikes;
-  float l1 = 64;
-  float l2;
+  // int n_spikes = 44;
+  // float angle_step = 2 * 3.1416 / n_spikes;
+  // float l1 = 64;
+  // float l2;
 
-  for (int i = 0; i < n_spikes; ++i) {
-    float cosv = std::cos(i*angle_step);
-    float sinv = std::sin(i*angle_step);
-    float pt1_dx = l1*sinv;
-    float pt1_dy = l1*cosv;
+  // for (int i = 0; i < n_spikes; ++i) {
+  //   float cosv = std::cos(i*angle_step);
+  //   float sinv = std::sin(i*angle_step);
+  //   float pt1_dx = l1*sinv;
+  //   float pt1_dy = l1*cosv;
 
-    float angle_diff = abs(i*angle_step - real_angle);
-    angle_diff = fmin(angle_diff, 2 * 3.1416 - angle_diff);
-    if (abs(angle_diff) > 2 * 3.1416 / 6) {
-      l2 = 65;
-    } else {
-      l2 = 65 + fmin((2 * 3.1416 / 6 - abs(angle_diff)) * 21, (2 * 3.1416 / 6 - abs(angle_diff)) * amp);
-    }
-    float pt2_dx = l2*sinv;
-    float pt2_dy = l2*cosv;
+  //   float angle_diff = abs(i*angle_step - real_angle);
+  //   angle_diff = fmin(angle_diff, 2 * 3.1416 - angle_diff);
+  //   if (abs(angle_diff) > 2 * 3.1416 / 6) {
+  //     l2 = 65;
+  //   } else {
+  //     l2 = 65 + fmin((2 * 3.1416 / 6 - abs(angle_diff)) * 21, (2 * 3.1416 / 6 - abs(angle_diff)) * amp);
+  //   }
+  //   float pt2_dx = l2*sinv;
+  //   float pt2_dy = l2*cosv;
 
-    /*QPointF pts[] = {{x+pt1_dx-1, y-pt1_dy-1},
-                               {x+pt1_dx+1, y-pt1_dy+1},
-                               {x+pt2_dx+1, y-pt2_dy+1},
-                               {x+pt2_dx-1, y-pt2_dy-1}};*/
-    // painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7));
-    // painter.drawPolygon(pts, 4);
-    QLineF line(x+pt1_dx, y-pt1_dy, x+pt2_dx, y-pt2_dy);
-    painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7), 2, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(line);
-  }
+  //   /*QPointF pts[] = {{x+pt1_dx-1, y-pt1_dy-1},
+  //                              {x+pt1_dx+1, y-pt1_dy+1},
+  //                              {x+pt2_dx+1, y-pt2_dy+1},
+  //                              {x+pt2_dx-1, y-pt2_dy-1}};*/
+  //   // painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7));
+  //   // painter.drawPolygon(pts, 4);
+  //   QLineF line(x+pt1_dx, y-pt1_dy, x+pt2_dx, y-pt2_dy);
+  //   painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7), 2, Qt::SolidLine, Qt::RoundCap));
+  //   painter.drawLine(line);
+  // }
 
+  // painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 5, Qt::SolidLine, Qt::RoundCap));
+  // if (scene.dm_mbp < 0.85) {
+  //   painter.drawLine(QLineF(x-9, y-12, x-9, y-11));
+  //   painter.drawLine(QLineF(x+9, y-12, x+9, y-11));
+  // }
+  // /*QPointF pts[] = {{x-7.0, y+6.0},
+  //                            {x-2.0, y+6.0},
+  //                            {x+0.0, y+6.0},
+  //                            {x+2.0, y+6.0},
+  //                            {x+7.0, y+6.0}};
+  // painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
+  // painter.drawPolyline(pts, 5);*/
+
+  
+  // face
+  int faceX = x;
+  int faceY = y;
   painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 5, Qt::SolidLine, Qt::RoundCap));
-  if (scene.dm_mbp < 0.85) {
-    painter.drawLine(QLineF(x-9, y-12, x-9, y-11));
-    painter.drawLine(QLineF(x+9, y-12, x+9, y-11));
-  }
-  /*QPointF pts[] = {{x-7.0, y+6.0},
-                             {x-2.0, y+6.0},
-                             {x+0.0, y+6.0},
-                             {x+2.0, y+6.0},
-                             {x+7.0, y+6.0}};
-  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
-  painter.drawPolyline(pts, 5);*/
+  painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 0.0));
+  painter.drawEllipse(QPoint(faceX, faceY), 100, 100);
 
+  // eyes
+  int eyeCenterX = faceX + std::clamp((int)(scene.dm_py * 60 * 2 / 1.57), -40, 40);
+  int eyeCenterY = faceY + std::clamp((int)(scene.dm_pp * 30 / 1.57) - 20, -50, 0);
+  int lEyeX = eyeCenterX - 20;
+  int lEyeY = eyeCenterY;
+  int rEyeX = eyeCenterX + 20;
+  int rEyeY = eyeCenterY;
+
+  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
+  painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0));
+  painter.drawEllipse(QPoint(lEyeX, lEyeY), 10, 20);
+  painter.drawEllipse(QPoint(rEyeX, rEyeY), 10, 20);
+
+  // eyeballs
+  // eyes
+  int lEyeBallX = lEyeX + std::clamp((int)(scene.dm_py * 15 * 2 / 1.57), -5, 5);
+  int lEyeBallY = lEyeY + 5 + std::clamp((int)(scene.dm_pp * 15 * 2 / 1.57), -5, 5);
+  int rEyeBallX = rEyeX + std::clamp((int)(scene.dm_py * 15 * 2 / 1.57), -5, 5);
+  int rEyeBallY = rEyeY + 5 + std::clamp((int)(scene.dm_pp * 15 * 2 / 1.57), -5, 5);
+  painter.setPen(QPen(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
+  painter.setBrush(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0));
+  painter.drawEllipse(QPoint(lEyeBallX, lEyeBallY), 5, 10);
+  painter.drawEllipse(QPoint(rEyeBallX, rEyeBallY), 5, 10);
+  
   painter.restore();
 }
 
