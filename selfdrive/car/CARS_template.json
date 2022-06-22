@@ -1,35 +1,13 @@
-{% set footnote_tag = '<a style="position: absolute;" href="/vehicles/#footnote"><sup>{}</sup></a>' -%}
-{% set star_icon = '<img src="/supported-cars/icon-star-{}.svg" alt="">' -%}
-
-
 {
-}
-
-
-import axios from 'axios';
-
-export const state = () => ({
-  supportedVehicles: {
-    {% for tier, cars in tiers.items() %}
-    '{{tier.name.title()}}': {
-      description: '{{tier.value | replace("'", "\\'")}}',
-      cars: [
-        {% for car_info in cars %}
-        {
-          video_link: '{{car_info.video_link}}',
-          row: {
-            {% for column in Column %}
-            {{column.name.lower()}}: '{{car_info.get_column(column, star_icon, footnote_tag)}}',
-            {% endfor %}
-          }
-        },
-        {% endfor %}
-      ],
-    },
+  {% for tier, cars in tiers.items() %}
+  "{{tier.name.title()}}": [
+    {% for car_info in cars %}
+    {
+      {% for name, value in car_info.row.items() %}
+      "{{name.value}}": "{{value}}"{{"" if loop.last else ","}}
+      {% endfor %}
+    }{{"" if loop.last else ","}}
     {% endfor %}
-  },
-})
-
-export const mutations = {}
-
-export const actions = {}
+  ]{{"" if loop.last else ","}}
+  {% endfor %}
+}
