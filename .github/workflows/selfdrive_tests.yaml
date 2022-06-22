@@ -514,7 +514,7 @@ jobs:
         with:
           submodules: true
           path: ref
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: 3e3801088da46a35c9bf000dd399726750297edd  # ${{ github.event.pull_request.base.ref }}
       - name: Cache scons
         id: scons-cache
         # TODO: Change the version to the released version when https://github.com/actions/cache/pull/489 (or 571) is merged.
