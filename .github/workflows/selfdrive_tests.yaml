@@ -525,7 +525,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: old-car-info
-          path: ../old_car_info
+          path: old_car_info
 
   car_docs_diff:
     name: print car docs diff
@@ -540,7 +540,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: old-car-info
-        path: ../old_car_info
+        path: old_car_info
     - name: Build Docker image
       run: eval "$BUILD"
     - name: Print diff
