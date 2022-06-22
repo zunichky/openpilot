@@ -533,7 +533,7 @@ jobs:
           ls -lah
           echo "Starting dump_car_info"
           ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/dump_car_info.py"
-      - uses: actions/download-artifact@master
+      - uses: actions/upload-artifact@master
         with:
           name: old-car-info
           path: old_car_info
