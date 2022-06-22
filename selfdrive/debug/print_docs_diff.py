@@ -9,8 +9,6 @@ from selfdrive.car.docs_definitions import Column
 # print('All car info:')
 # print(old_docs.get_all_car_info())
 
-env_file = os.getenv('GITHUB_ENV')
-
 
 class FakeCarInfo:
   def __init__(self, make, model, row):
@@ -33,29 +31,22 @@ new_car_info = {f'{i.make} {i.model}': i for i in get_all_car_info()}
 added_cars = set(new_car_info) - set(old_car_info)
 deleted_cars = set(old_car_info) - set(new_car_info)
 
-msg = []
-
 print(added_cars, deleted_cars)
 if len(added_cars):
-  msg.append('This PR adds these car entries:')
+  print('This PR adds these car entries:')
   for k in added_cars:
     car_info = new_car_info[k]
-    msg.append('{}: {}'.format(k, pretty_row(car_info.row)))
+    print('{}: {}'.format(k, pretty_row(car_info.row)))
 
 if len(deleted_cars):
-  msg.append('This PR removes these car entries:')
+  print('This PR removes these car entries:')
   for k in deleted_cars:
     car_info = old_car_info[k]
-    msg.append('{}: {}'.format(k, pretty_row(car_info.row)))
+    print('{}: {}'.format(k, pretty_row(car_info.row)))
 
 for new_car, new_car_info in new_car_info.items():
   if new_car in old_car_info and new_car_info.row != old_car_info[new_car].row:
-    msg.append('Diff in car: {}'.format(new_car_info.row))
+    print('Diff in car: {}'.format(new_car_info.row))
 
 # diffs = []
 # for car_info in get_all_car_info():
-
-print(msg)
-print('CAR_DIFF="{}"'.format('\n'.join(msg)))
-with open(env_file, "a") as f:
-  f.write('CAR_DIFF="{}"'.format('\n'.join(msg)))
