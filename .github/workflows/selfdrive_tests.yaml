@@ -570,4 +570,6 @@ jobs:
         run: |
           ls -lah
           echo "Starting print_docs_diff"
+          echo ${{steps.download.outputs.download-path}}
+          ls -lah old_car_info/
           ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/print_docs_diff.py"
