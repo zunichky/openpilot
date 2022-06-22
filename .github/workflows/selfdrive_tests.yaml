@@ -573,7 +573,7 @@ jobs:
           echo ${{steps.download.outputs.download-path}}
           ls -lah old_car_info/
           ${{ env.RUN }} "scons -j$(nproc)"
-          echo "CAR_DIFF=$(${{ env.RUN }} "python selfdrive/debug/print_docs_diff.py")" >> $GITHUB_ENV
+          echo "CAR_DIFF=$(${{ env.RUN }} 'python selfdrive/debug/print_docs_diff.py')" >> $GITHUB_ENV
       - uses: mshick/add-pr-comment@v1
         with:
           message: ${{ env.CAR_DIFF }}
