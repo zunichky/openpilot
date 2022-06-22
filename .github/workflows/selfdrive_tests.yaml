@@ -523,4 +523,5 @@ jobs:
     - name: Print diff
       run: |
         ls -lah
+        echo "Starting print_docs_diff"
         ${{ env.RUN }} python selfdrive/debug/print_docs_diff.py
