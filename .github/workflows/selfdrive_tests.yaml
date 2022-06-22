@@ -504,8 +504,8 @@ jobs:
 #        $DOCKER_LOGIN
 #        docker push $DOCKER_REGISTRY/openpilot-docs:latest
 
-  car_docs_diff:
-    name: print car docs diff
+  store_car_docs:
+    name: store original car docs
     runs-on: ubuntu-20.04
     timeout-minutes: 50
     if: github.event_name == 'pull_request'
@@ -538,9 +538,28 @@ jobs:
           name: old-car-info
           path: old_car_info
 
+  car_docs_diff:
+    name: print car docs diff
+    runs-on: ubuntu-20.04
+    timeout-minutes: 50
+    if: github.event_name == 'pull_request'
+    needs: store_car_docs
+    steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
+      - name: Cache scons
+        id: scons-cache
+        # TODO: Change the version to the released version when https://github.com/actions/cache/pull/489 (or 571) is merged.
+        uses: actions/cache@03e00da99d75a2204924908e1cca7902cafce66b
+        env:
+          CACHE_SKIP_SAVE: true
+        with:
+          path: /tmp/scons_cache
+          key: scons-key1-
+          restore-keys: |
+            scons-key1-
+            scons-
       - name: Build Docker image
         run: eval "$BUILD"
       - uses: actions/download-artifact@master
@@ -552,7 +571,3 @@ jobs:
           ls -lah
           echo "Starting print_docs_diff"
           ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/print_docs_diff.py"
-      - uses: actions/upload-artifact@master
-        with:
-          name: old-car-info
-          path: old_car_info
