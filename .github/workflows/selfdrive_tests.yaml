@@ -533,7 +533,7 @@ jobs:
         run: |
           ls -lah
           echo "Starting dump_car_info"
-          ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/dump_car_info.py"
+          ${{ env.RUN }} "scons -j$(nproc) && python ref/selfdrive/debug/dump_car_info.py"
       - uses: actions/download-artifact@master
         with:
           name: old-car-info
@@ -553,7 +553,7 @@ jobs:
         run: |
           ls -lah
           echo "Starting print_docs_diff"
-          ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/print_docs_diff.py"
+          ${{ env.RUN }} "scons -j$(nproc) && python head/selfdrive/debug/print_docs_diff.py"
       - uses: actions/upload-artifact@master
         with:
           name: old-car-info
