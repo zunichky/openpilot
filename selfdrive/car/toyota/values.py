@@ -113,7 +113,6 @@ CAR_INFO: Dict[str, Union[ToyotaCarInfo, List[ToyotaCarInfo]]] = {
   CAR.AVALONH_TSS2: ToyotaCarInfo("Toyota Avalon Hybrid 2022"),
   CAR.CAMRY: ToyotaCarInfo("Toyota Camry 2018-20", video_link="https://www.youtube.com/watch?v=fkcjviZY9CM", footnotes=[Footnote.CAMRY]),
   CAR.CAMRYH: ToyotaCarInfo("Toyota Camry Hybrid 2018-20", video_link="https://www.youtube.com/watch?v=Q2DYY0AWKgk", footnotes=[Footnote.CAMRY]),
-  CAR.CAMRY_TSS2: ToyotaCarInfo("Toyota Camry 2021-22", footnotes=[Footnote.CAMRY]),
   CAR.CAMRYH_TSS2: ToyotaCarInfo("Toyota Camry Hybrid 2021-22"),
   CAR.CHR: ToyotaCarInfo("Toyota C-HR 2017-21"),
   CAR.CHRH: ToyotaCarInfo("Toyota C-HR Hybrid 2017-19"),
@@ -137,6 +136,7 @@ CAR_INFO: Dict[str, Union[ToyotaCarInfo, List[ToyotaCarInfo]]] = {
     ToyotaCarInfo("Toyota Prius Prime 2017-20", video_link="https://www.youtube.com/watch?v=8zopPJI8XQ0", footnotes=[Footnote.DSU]),
     ToyotaCarInfo("Toyota Prius Elite 2017-20", video_link="https://www.youtube.com/watch?v=8zopPJI8XQ0", footnotes=[Footnote.DSU]),
     ToyotaCarInfo("Toyota Prius Elite Hybrid 2017-20", video_link="https://www.youtube.com/watch?v=8zopPJI8XQ0", footnotes=[Footnote.DSU]),
+    ToyotaCarInfo("Toyota Prius Elite Hybrid ICE 2017-20", video_link="https://www.youtube.com/watch?v=8zopPJI8XQ0", footnotes=[Footnote.DSU]),
   ],
   CAR.PRIUS_V: ToyotaCarInfo("Toyota Prius v 2017", "TSS-P", min_enable_speed=MIN_ACC_SPEED, footnotes=[Footnote.DSU]),
   CAR.PRIUS_TSS2: [
