@@ -504,6 +504,29 @@ jobs:
 #        $DOCKER_LOGIN
 #        docker push $DOCKER_REGISTRY/openpilot-docs:latest
 
+  store_original_car_info:
+    name: store original car info
+    runs-on: ubuntu-20.04
+    timeout-minutes: 50
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: openpilot_pr_base
+      - name: Build Docker image
+        run: eval "$BUILD"
+      - name: Print diff
+        run: |
+          ls -lah
+          echo "Starting print_docs_diff"
+          ${{ env.RUN }} "scons -j$(nproc) && python selfdrive/debug/dump_car_info.py"
+      - uses: actions/upload-artifact@master
+        with:
+          name: my-artifact
+          path: path/to/artifact
+
   car_docs_diff:
     name: print car docs diff
     runs-on: ubuntu-20.04

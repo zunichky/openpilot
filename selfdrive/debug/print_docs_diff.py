@@ -4,6 +4,7 @@ print("Start of print_docs_diff")
 # from selfdrive.car import docs as new_docs
 from selfdrive.car.docs import CARS_MD_OUT
 import re
+import pickle
 
 # # TODO: if we can easily parse the stars from the generated CARS.md file, do that instead
 # os.environ['PYTHONPATH'] = os.path.join(BASEDIR, "openpilot_pr_base")
@@ -16,12 +17,19 @@ print('All car info:')
 # print(old_docs.get_all_car_info())
 
 
+class FakeCarInfo:
+  def __init__(self, make, model, row):
+    self.make = make
+    self.model = model
+    self.row = row
+
+
 def pretty_row(row, exclude=[Column.MAKE, Column.MODEL]):
   return {k.value: v for k, v in row.items() if k not in exclude}
 
 
 def get_old_car_info():
-  with open(CARS_MD_OUT, 'r') as f:
+  with open('/home/batman/openpilot_pr_base/docs/CARS.md', 'r') as f:
     cars_md = f.read()
   old_car_info = []
   for line in cars_md.splitlines():
@@ -31,6 +39,8 @@ def get_old_car_info():
 
 
 print(get_old_car_info())
+
+a = pickle.dumps(get_all_car_info())
 
 raise Exception
 old_car_info = {f'{i.make} {i.model}': i for i in old_docs.get_all_car_info()}
