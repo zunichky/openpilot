@@ -31,6 +31,7 @@ new_car_info = {f'{i.make} {i.model}': i for i in get_all_car_info()}
 added_cars = set(new_car_info) - set(old_car_info)
 deleted_cars = set(old_car_info) - set(new_car_info)
 
+print(added_cars, deleted_cars)
 if len(added_cars):
   print('This PR adds these car entries:')
   for k in added_cars:
@@ -43,9 +44,9 @@ if len(deleted_cars):
     car_info = old_car_info[k]
     print('{}: {}'.format(k, pretty_row(car_info.row)))
 
-# for new_car, new_car_info in new_car_info.items():
-#   if new_car in old_car_info and new_car.row != old_car_info[new_car].row:
-#     print('Diff in car: {}'.format(new_car.row))
+for new_car, new_car_info in new_car_info.items():
+  if new_car in old_car_info and new_car_info.row != old_car_info[new_car].row:
+    print('Diff in car: {}'.format(new_car_info.row))
 
 # diffs = []
 # for car_info in get_all_car_info():
