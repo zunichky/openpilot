@@ -517,8 +517,8 @@ jobs:
       with:
         submodules: true
         ref: ${{ github.event.pull_request.base.ref }}
-        path: openpilot-base-pr
+        path: openpilot_pr_base
     - name: Print diff
       run: |
         ls -lah
-
+        python selfdrive/debug/print_docs_diff.py
