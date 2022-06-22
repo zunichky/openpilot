@@ -514,7 +514,6 @@ jobs:
         with:
           submodules: true
           ref: ${{ github.event.pull_request.base.ref }}
-          path: openpilot_pr_base
       - name: Build Docker image
         run: eval "$BUILD"
       - name: Print diff
