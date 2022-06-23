@@ -553,26 +553,29 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
   // eyes
   int eyeCenterX = faceX + std::clamp((int)(scene.dm_py * 60 * 2 / 1.57), -40, 40);
   int eyeCenterY = faceY + std::clamp((int)(scene.dm_pp * 30 / 1.57) - 20, -50, 0);
-  int lEyeX = eyeCenterX - 20;
+  int lEyeX = eyeCenterX - 25;
   int lEyeY = eyeCenterY;
-  int rEyeX = eyeCenterX + 20;
+  int rEyeX = eyeCenterX + 25;
   int rEyeY = eyeCenterY;
 
-  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
+  int eyeWidth = 20;
+  int eyeHeight = 40;
+  painter.setPen(QPen(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0), 2, Qt::SolidLine, Qt::RoundCap));
   painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0));
-  painter.drawEllipse(QPoint(lEyeX, lEyeY), 10, 20);
-  painter.drawEllipse(QPoint(rEyeX, rEyeY), 10, 20);
+  painter.drawEllipse(QPoint(lEyeX, lEyeY), eyeWidth, eyeHeight);
+  painter.drawEllipse(QPoint(rEyeX, rEyeY), eyeWidth, eyeHeight);
 
   // eyeballs
-  // eyes
+  int eyeBallWidth = 10;
+  int eyeBallHeight = 20;
   int lEyeBallX = lEyeX + std::clamp((int)(scene.dm_py * 15 * 2 / 1.57), -5, 5);
   int lEyeBallY = lEyeY + 5 + std::clamp((int)(scene.dm_pp * 15 * 2 / 1.57), -5, 5);
   int rEyeBallX = rEyeX + std::clamp((int)(scene.dm_py * 15 * 2 / 1.57), -5, 5);
   int rEyeBallY = rEyeY + 5 + std::clamp((int)(scene.dm_pp * 15 * 2 / 1.57), -5, 5);
   painter.setPen(QPen(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
   painter.setBrush(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0));
-  painter.drawEllipse(QPoint(lEyeBallX, lEyeBallY), 5, 10);
-  painter.drawEllipse(QPoint(rEyeBallX, rEyeBallY), 5, 10);
+  painter.drawEllipse(QPoint(lEyeBallX, lEyeBallY), eyeBallWidth, eyeBallHeight);
+  painter.drawEllipse(QPoint(rEyeBallX, rEyeBallY), eyeBallWidth, eyeBallHeight);
   
   painter.restore();
 }
