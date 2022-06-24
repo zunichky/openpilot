@@ -27,6 +27,7 @@ class CarState(CarStateBase):
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
+    self.acc_control = cp_cam.vl["ACC_CONTROL"]
 
     ret.doorOpen = any([cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FR"],
                         cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RR"]])
@@ -226,6 +227,10 @@ class CarState(CarStateBase):
     signals = [
       ("FORCE", "PRE_COLLISION"),
       ("PRECOLLISION_ACTIVE", "PRE_COLLISION"),
+      ("ACCEL_CMD", "ACC_CONTROL"),
+      ("PERMIT_BRAKING", "ACC_CONTROL"),
+      ("ACCEL_CMD_ALT", "ACC_CONTROL"),
+      ("MYSTERY_BIT", "ACC_CONTROL"),
     ]
 
     # use steering message to check if panda is connected to frc
