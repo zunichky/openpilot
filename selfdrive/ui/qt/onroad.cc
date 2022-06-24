@@ -499,60 +499,17 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
 
   const UIScene &scene = s->scene;
 
-  float real_angle = std::atan2(scene.dm_py, scene.dm_pp);
-  if (scene.dm_py < 0) {
-    real_angle += 2 * 3.1416;
-  }
-  // printf("py, pp = %.2f, %.2f \n", scene.dm_py, scene.dm_pp);
-  // printf("real angle = %.3f \n", real_angle / 3.1416 * 180);
+  int sz = 135;
 
-  float real_amp = std::sqrt(scene.dm_py * scene.dm_py + scene.dm_pp * scene.dm_pp);
-  float amp = 9 * real_amp / 0.18;
+  int yarc_dh = sz;
+  float yarc_dw = sz*fmin(abs(scene.dm_py) / (3.1416 / 2), 1.0);
 
-  int n_spikes = 44;
-  float angle_step = 2 * 3.1416 / n_spikes;
-  float l1 = 64;
-  float l2;
+  int parc_dw = sz;
+  float parc_dh = sz*fmin(abs(scene.dm_pp) / (3.1416 / 2), 1.0);
 
-  for (int i = 0; i < n_spikes; ++i) {
-    float cosv = std::cos(i*angle_step);
-    float sinv = std::sin(i*angle_step);
-    float pt1_dx = l1*sinv;
-    float pt1_dy = l1*cosv;
-
-    float angle_diff = abs(i*angle_step - real_angle);
-    angle_diff = fmin(angle_diff, 2 * 3.1416 - angle_diff);
-    if (abs(angle_diff) > 2 * 3.1416 / 6) {
-      l2 = 65;
-    } else {
-      l2 = 65 + fmin((2 * 3.1416 / 6 - abs(angle_diff)) * 21, (2 * 3.1416 / 6 - abs(angle_diff)) * amp);
-    }
-    float pt2_dx = l2*sinv;
-    float pt2_dy = l2*cosv;
-
-    /*QPointF pts[] = {{x+pt1_dx-1, y-pt1_dy-1},
-                               {x+pt1_dx+1, y-pt1_dy+1},
-                               {x+pt2_dx+1, y-pt2_dy+1},
-                               {x+pt2_dx-1, y-pt2_dy-1}};*/
-    // painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7));
-    // painter.drawPolygon(pts, 4);
-    QLineF line(x+pt1_dx, y-pt1_dy, x+pt2_dx, y-pt2_dy);
-    painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 0.7), 2, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(line);
-  }
-
-  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 5, Qt::SolidLine, Qt::RoundCap));
-  if (scene.dm_mbp < 0.85) {
-    painter.drawLine(QLineF(x-9, y-12, x-9, y-11));
-    painter.drawLine(QLineF(x+9, y-12, x+9, y-11));
-  }
-  /*QPointF pts[] = {{x-7.0, y+6.0},
-                             {x-2.0, y+6.0},
-                             {x+0.0, y+6.0},
-                             {x+2.0, y+6.0},
-                             {x+7.0, y+6.0}};
-  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
-  painter.drawPolyline(pts, 5);*/
+  painter.setPen(QPen(QColor::fromRgbF(0.3, 0.7, 0.3, 0.7), 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+  painter.drawArc(QRectF(x-(int)yarc_dw/2, y-yarc_dh/2, (int)yarc_dw, yarc_dh), (scene.dm_py > 0 ? -90 : 90) * 16, 180 * 16);
+  painter.drawArc(QRectF(x-(int)parc_dw/2, y-parc_dh/2, (int)parc_dw, parc_dh), (scene.dm_pp > 0 ? 0 : 180) * 16, 180 * 16);
 
   painter.restore();
 }
