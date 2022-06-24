@@ -499,17 +499,28 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
 
   const UIScene &scene = s->scene;
 
-  int sz = 135;
+  int sz = 25;
+  int ds = 80;
 
-  int yarc_dh = sz;
-  float yarc_dw = sz*fmin(abs(scene.dm_py) / (3.1416 / 2), 1.0);
+  //int yarc_dh = sz;
+  //float yarc_dw = sz*fmin(1.5 * abs(scene.dm_py) / (3.1416 / 2), 1.0);
 
-  int parc_dw = sz;
-  float parc_dh = sz*fmin(abs(scene.dm_pp) / (3.1416 / 2), 1.0);
+  //int parc_dw = sz;
+  //float parc_dh = sz*fmin(1.5 * abs(scene.dm_pp) / (3.1416 / 2), 1.0);
 
-  painter.setPen(QPen(QColor::fromRgbF(0.3, 0.7, 0.3, 0.7), 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
-  painter.drawArc(QRectF(x-(int)yarc_dw/2, y-yarc_dh/2, (int)yarc_dw, yarc_dh), (scene.dm_py > 0 ? -90 : 90) * 16, 180 * 16);
-  painter.drawArc(QRectF(x-(int)parc_dw/2, y-parc_dh/2, (int)parc_dw, parc_dh), (scene.dm_pp > 0 ? 0 : 180) * 16, 180 * 16);
+  //painter.setPen(QPen(QColor::fromRgbF(0.3, 0.7, 0.3, 0.9), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  //painter.drawArc(QRectF(x-(int)yarc_dw/2, y-yarc_dh/2, (int)yarc_dw, yarc_dh), (scene.dm_py > 0 ? -90 : 90) * 16, 180 * 16);
+  //painter.drawArc(QRectF(x-(int)parc_dw/2, y-parc_dh/2, (int)parc_dw, parc_dh), (scene.dm_pp > 0 ? 0 : 180) * 16, 180 * 16);
+
+  float dx = ds*fmin(2 * abs(scene.dm_py) / (3.1416 / 2), 1.0);
+  float dy = ds*fmin(2 * abs(scene.dm_pp) / (3.1416 / 2), 1.0);
+
+  // float g = 200 - 150 * fmax(dx, dy) / ds;
+  float rb = 0.2 + 0.6 * fmax(dx, dy) / ds;
+
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(QColor::fromRgbF(rb, 0.8, rb, 0.75));
+  painter.drawEllipse(x+dx - sz / 2, y+dy - sz / 2, sz, sz);
 
   painter.restore();
 }
