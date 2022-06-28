@@ -167,6 +167,7 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
 NvgWindow::NvgWindow(VisionStreamType type, QWidget* parent) : fps_filter(UI_FREQ, 3, 1. / UI_FREQ), CameraViewWidget("camerad", type, true, parent) {
   engage_img = loadPixmap("../assets/img_chffr_wheel.png", {img_size, img_size});
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size, img_size});
+  dm_img_ss = loadPixmap("../assets/img_driver_face_standstill.png", {img_size, img_size});
 }
 
 void NvgWindow::updateState(const UIState &s) {
@@ -198,6 +199,7 @@ void NvgWindow::updateState(const UIState &s) {
   setProperty("is_cruise_set", cruise_set);
   setProperty("is_metric", s.scene.is_metric);
   setProperty("speed", cur_speed);
+  setProperty("isStandstill", sm["carState"].getCarState().getStandstill());
   setProperty("setSpeed", set_speed);
   setProperty("speedUnit", s.scene.is_metric ? "km/h" : "mph");
   setProperty("hideDM", cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE);
@@ -371,9 +373,11 @@ void NvgWindow::drawHud(QPainter &p, const UIState *s) {
 
   // dm icon
   if (!hideDM) {
-    // drawIcon(p, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2,
-    //          dm_img, blackColor(70), dmActive ? 1.0 : 0.2);
-    drawDriverState(p, s, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2);
+    drawIcon(p, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2,
+             isStandstill ? dm_img_ss : dm_img, blackColor(70), dmActive ? 1.0 : 0.2);
+    if (isStandstill) {
+      drawDriverState(p, s, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2);
+    }
   }
   p.restore();
 }
@@ -502,7 +506,50 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
 
   const UIScene &scene = s->scene;
 
-  printf("py, pp = %.2f, %.2f \n", scene.dm_py, scene.dm_pp);
+  // printf("py, pp = %.2f, %.2f \n", scene.dm_py, scene.dm_pp);
+  float real_angle = std::atan2(scene.dm_py, scene.dm_pp);
+  float real_amp = std::sqrt(scene.dm_py * scene.dm_py + scene.dm_pp * scene.dm_pp);
+  if (scene.dm_py < 0) {
+    real_angle += 2 * 3.1416;
+  }
+  printf("real angle: %.1f (%.0f)\n", real_angle, real_angle / 3.1416 * 180);
+
+  int sz_0 = 125;
+  int sz_delta = 2;
+  int max_arc = 25;
+  int n_arc = fmax(fmin(real_amp / (0.32 / max_arc), max_arc), 5);
+  // int arc_span = 30;
+  static int arc_span_last = 30;
+  int arc_span;
+  if (n_arc <= 5) {
+    arc_span = 360;
+  } else if (n_arc < 8) {
+    arc_span = 360 - (360 - 90) / (8 - 5) * (n_arc - 5);
+  } else if (n_arc < 20) {
+    arc_span = 90 - (90 - 30) / (20 - 8) * (n_arc - 8);
+  } else {
+    arc_span = 30;
+  }
+  arc_span = 0.33 * arc_span + 0.66 * arc_span_last;
+  arc_span_last = arc_span;
+
+  float arc_start = 16 * (- 180 / 3.1416 * real_angle + 90 - arc_span / 2);
+
+  // n_arc = 25;
+  // (0.09, 0.525, 0.267, 0.945)
+  // (0.855, 0.435, 0.145)
+  // (0.788, 0.133, 0.192)
+  painter.setPen(QPen(QColor::fromRgbF(0.09+(0.855-0.09)*n_arc/max_arc,
+                                            0.525+(0.435-0.525)*n_arc/max_arc,
+                                            0.267+(0.145-0.267)*n_arc/max_arc, 0.945), 1, Qt::SolidLine, Qt::SquareCap));
+  for (int i = 0; i < n_arc; ++i) {
+    int sz_this = sz_0 + i*sz_delta;
+    // painter.setPen(QPen(QColor::fromRgbF(0.09+(0.855-0.09)*i/max_arc,
+    //                                        0.525+(0.435-0.525)*i/max_arc,
+    //                                        0.267+(0.145-0.267)*i/max_arc, 0.945), 1, Qt::SolidLine, Qt::SquareCap));
+    painter.drawArc(QRectF(x-sz_this/2, y-sz_this/2, sz_this, sz_this), arc_start, 16 * arc_span);
+  }
+
 
   // float real_amp = std::sqrt(scene.dm_py * scene.dm_py + scene.dm_pp * scene.dm_pp);
   // float amp = 9 * real_amp / 0.18;
@@ -553,7 +600,7 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
   // painter.drawPolyline(pts, 5);*/
 
   
-  // face
+  /*// face
   int faceX = x;
   int faceY = y;
   painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, 1.0), 5, Qt::SolidLine, Qt::RoundCap));
@@ -585,7 +632,7 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s, int x, int 
   painter.setPen(QPen(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0), 3, Qt::SolidLine, Qt::RoundCap));
   painter.setBrush(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0));
   painter.drawEllipse(QPoint(lEyeBallX, lEyeBallY), eyeBallWidth, eyeBallHeight);
-  painter.drawEllipse(QPoint(rEyeBallX, rEyeBallY), eyeBallWidth, eyeBallHeight);
+  painter.drawEllipse(QPoint(rEyeBallX, rEyeBallY), eyeBallWidth, eyeBallHeight);*/
   
   painter.restore();
 }

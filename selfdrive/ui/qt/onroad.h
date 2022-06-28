@@ -32,6 +32,7 @@ class NvgWindow : public CameraViewWidget {
   Q_PROPERTY(float setSpeed MEMBER setSpeed);
   Q_PROPERTY(float speedLimit MEMBER speedLimit);
   Q_PROPERTY(bool is_cruise_set MEMBER is_cruise_set);
+  Q_PROPERTY(bool isStandstill MEMBER isStandstill);
   Q_PROPERTY(bool has_eu_speed_limit MEMBER has_eu_speed_limit);
   Q_PROPERTY(bool has_us_speed_limit MEMBER has_us_speed_limit);
   Q_PROPERTY(bool is_metric MEMBER is_metric);
@@ -51,9 +52,11 @@ private:
 
   QPixmap engage_img;
   QPixmap dm_img;
+  QPixmap dm_img_ss;
   const int radius = 192;
   const int img_size = (radius / 2) * 1.5;
   float speed;
+  bool isStandstill = false;
   QString speedUnit;
   float setSpeed;
   float speedLimit;
