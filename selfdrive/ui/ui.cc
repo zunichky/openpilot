@@ -107,24 +107,14 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
     update_line_data(s, road_edges[i], 0.025, 0, &scene.road_edge_vertices[i], max_idx);
   }
 
-  scene.dm_pp = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getPP();
-  float kk = 1200.0;
-  float pointp = 528.0 - kk * std::tan(scene.dm_pp);
+  float pointp = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getPP();
   pointp = 0.33 * pointp + 0.66 * scene.dmppp;
   scene.dmppp = pointp;
-  scene.dmpp1.v[0] = QPointF{2110, pointp-5};
-  scene.dmpp1.v[1] = QPointF{0, pointp-5};
-  scene.dmpp1.v[2] = QPointF{0, pointp+5};
-  scene.dmpp1.v[3] = QPointF{2110, pointp+5};
-  scene.dm_py = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getPY();
-  float pointy = 1055.0 + kk * std::tan(scene.dm_py);
+  scene.dm_pp = pointp;
+  float pointy = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getPY();
   pointy = 0.33 * pointy + 0.66 * scene.dmpyp;
   scene.dmpyp = pointy;
-  scene.dmpy1.v[0] = QPointF{pointy-5, 0};
-  scene.dmpy1.v[1] = QPointF{pointy-5, 1080};
-  scene.dmpy1.v[2] = QPointF{pointy+5, 1080};
-  scene.dmpy1.v[3] = QPointF{pointy+5, 0};
-  scene.dm_mbp = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getMBP();
+  scene.dm_py = pointy;
   // update path
   auto lead_one = (*s->sm)["radarState"].getRadarState().getLeadOne();
   if (lead_one.getStatus()) {
