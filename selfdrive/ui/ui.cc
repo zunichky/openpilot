@@ -207,6 +207,7 @@ static void update_state(UIState *s) {
 
 void ui_update_params(UIState *s) {
   s->scene.is_metric = Params().getBool("IsMetric");
+  s->scene.use_ge = Params().getBool("GooglyEyes");
 }
 
 void UIState::updateStatus() {
