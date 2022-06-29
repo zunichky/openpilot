@@ -373,7 +373,7 @@ void NvgWindow::drawHud(QPainter &p, const UIState *s) {
 
   // dm icon
   if (!hideDM) {
-    if (!s->scene.use_ge) {
+    if (!s->scene.use_ge || !isStandstill) {
     drawIcon(p, radius / 2 + (bdr_s * 2), rect().bottom() - footer_h / 2,
              isStandstill ? dm_img_ss : dm_img, blackColor(70), dmActive ? 1.0 : 0.2);
     }
