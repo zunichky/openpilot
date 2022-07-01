@@ -101,6 +101,10 @@ class CarController:
       # TODO: see if we can use this to smoothly start moving earlier
       permit_braking = int(CS.out.standstill or pcm_accel_cmd < 0.0 or actuators.futureAccel < 0.0)
 
+      # Toyota requests its stopping decel when it wants to stop
+      if pcm_accel_cmd < 0 and abs(actuators.futureAccel) < 0.05:
+        pcm_accel_cmd = min(pcm_accel_cmd, -0.4)
+
       # Lexus IS uses a different cancellation message
       if pcm_cancel_cmd and self.CP.carFingerprint in (CAR.LEXUS_IS, CAR.LEXUS_RC):
         can_sends.append(create_acc_cancel_command(self.packer))
