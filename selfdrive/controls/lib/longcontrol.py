@@ -63,12 +63,17 @@ class LongControl:
     if len(speeds) == len(accels) == CONTROL_N:
       v_target = interp(t_since_plan, T_IDXS[:CONTROL_N], speeds)
       a_target = interp(t_since_plan, T_IDXS[:CONTROL_N], accels)
+      v_error = CS.vEgo - v_target
+      if v_error < 0 and a_target < 0:
+        t = interp(v_error, [-1, 0], [0, 0.5])
+      else:
+        t = interp(v_error, [1, 0], [0.5, 0])
 
-      v_target_lower = interp(self.CP.longitudinalActuatorDelayLowerBound + t_since_plan, T_IDXS[:CONTROL_N], speeds)
-      a_target_lower = 2 * (v_target_lower - v_target) / self.CP.longitudinalActuatorDelayLowerBound - a_target
+      v_target_lower = interp(t + t_since_plan, T_IDXS[:CONTROL_N], speeds)
+      a_target_lower = 2 * (v_target_lower - v_target) / t - a_target
 
-      v_target_upper = interp(self.CP.longitudinalActuatorDelayUpperBound + t_since_plan, T_IDXS[:CONTROL_N], speeds)
-      a_target_upper = 2 * (v_target_upper - v_target) / self.CP.longitudinalActuatorDelayUpperBound - a_target
+      v_target_upper = interp(t + t_since_plan, T_IDXS[:CONTROL_N], speeds)
+      a_target_upper = 2 * (v_target_upper - v_target) / t - a_target
       a_target = min(a_target_lower, a_target_upper)
 
       v_target_future = speeds[-1]
