@@ -67,7 +67,7 @@ class LongControl:
       if v_error < 0 and a_target < 0:
         t = interp(v_error, [-1, 0], [0, 0.5])
       else:
-        t = interp(v_error, [1, 0], [0.5, 0])
+        t = interp(v_error, [0, 1], [0.5, 0])
 
       v_target_lower = interp(t + t_since_plan, T_IDXS[:CONTROL_N], speeds)
       a_target_lower = 2 * (v_target_lower - v_target) / t - a_target
