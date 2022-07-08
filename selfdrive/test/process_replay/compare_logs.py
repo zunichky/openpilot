@@ -80,7 +80,7 @@ def remove_ignored_invalid_fields(msg, ignore):
   return msg.as_reader()
 
 
-def compare_logs(log1, log2, ignore_fields=None, ignore_msgs=None, tolerance=None, ignore_invalid_fields=None):
+def compare_logs(log1, log2, ignore_fields=None, ignore_msgs=None, tolerance=None, ignore_invalid_fields=None, tolerance_type=None):
   if ignore_fields is None:
     ignore_fields = []
   if ignore_msgs is None:
@@ -124,7 +124,15 @@ def compare_logs(log1, log2, ignore_fields=None, ignore_msgs=None, tolerance=Non
             a, b = diff[2]
             finite = math.isfinite(a) and math.isfinite(b)
             if finite and isinstance(a, numbers.Number) and isinstance(b, numbers.Number):
-              return abs(a - b) > max(tolerance, tolerance * max(abs(a), abs(b)))
+              tolerance_thresholds = [tolerance, tolerance * max(abs(a), abs(b))]
+              if tolerance_type == "only_relative":
+                tolerance_thresholds[0] = 0
+                tolerance_thresholds[1] = max(tolerance_thresholds[1], 1e-5)
+              elif tolerance_type == "only_abs":
+                tolerance_thresholds[1] = 0
+              elif tolerance_thresholds is not None:
+                raise RuntimeError(f"Tolerance type '{tolerance_type}' is invalid")
+              return abs(a - b) > max(tolerance_thresholds)
         except TypeError:
           pass
         return True
