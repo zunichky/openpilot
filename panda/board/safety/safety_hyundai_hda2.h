@@ -1,15 +1,16 @@
-const int HYUNDAI_HDA2_MAX_STEER = 150;
+const int HYUNDAI_HDA2_MAX_STEER = 270;
 const int HYUNDAI_HDA2_MAX_RT_DELTA = 112;          // max delta torque allowed for real time checks
 const uint32_t HYUNDAI_HDA2_RT_INTERVAL = 250000;   // 250ms between real time checks
 const int HYUNDAI_HDA2_MAX_RATE_UP = 3;
 const int HYUNDAI_HDA2_MAX_RATE_DOWN = 7;
-const int HYUNDAI_HDA2_DRIVER_TORQUE_ALLOWANCE = 50;
+const int HYUNDAI_HDA2_DRIVER_TORQUE_ALLOWANCE = 250;
 const int HYUNDAI_HDA2_DRIVER_TORQUE_FACTOR = 2;
 const uint32_t HYUNDAI_HDA2_STANDSTILL_THRSLD = 30;  // ~1kph
 
 const CanMsg HYUNDAI_HDA2_TX_MSGS[] = {
   {0x50, 0, 16},
   {0x1CF, 1, 8},
+  {0x2A4, 0, 24},
 };
 
 AddrCheckStruct hyundai_hda2_addr_checks[] = {
@@ -189,7 +190,7 @@ static int hyundai_hda2_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
   if (bus_num == 0) {
     bus_fwd = 2;
   }
-  if ((bus_num == 2) && (addr != 0x50)) {
+  if ((bus_num == 2) && (addr != 0x50) && (addr != 0x2a4)) {
     bus_fwd = 0;
   }
 
