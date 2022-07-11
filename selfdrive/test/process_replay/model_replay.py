@@ -34,8 +34,9 @@ def get_log_fn(ref_commit, test_route):
 
 def replace_calib(msg, calib):
   msg = msg.as_builder()
+  print(calib)
   if calib is not None:
-    msg.liveCalibration.extrinsicMatrix = get_view_frame_from_road_frame(*calib, 1.22).flatten().tolist()
+    msg.liveCalibration.extrinsicMatrix = get_view_frame_from_road_frame(*calib, 10.22).flatten().tolist()
   return msg
 
 
@@ -69,7 +70,9 @@ def model_replay(lr, frs):
     # init modeld with valid calibration
     cal_msgs = [msg for msg in lr if msg.which() == "liveCalibration"]
     for _ in range(5):
-      pm.send(cal_msgs[0].which(), cal_msgs[0].as_builder())
+      msg = cal_msgs[0]#.as_builder()
+      last_calib = list(msg.liveCalibration.rpyCalib)
+      pm.send(msg.which(), replace_calib(msg, last_calib))
       time.sleep(0.1)
 
     msgs = defaultdict(list)

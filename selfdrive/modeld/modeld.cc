@@ -26,17 +26,20 @@ mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera
   static const auto ground_from_medmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
      0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
     -1.09890110e-03, 0.00000000e+00, 2.81318681e-01,
-    -1.84808520e-20, 9.00738606e-04, -4.28751576e-02).finished();
+    -2.20612911e-21, 1.07524569e-04, -5.11816950e-03).finished();
 
   static const auto ground_from_sbigmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
      0.00000000e+00,  7.31372216e-19,  1.00000000e+00,
     -2.19780220e-03,  4.11497335e-19,  5.62637363e-01,
-    -5.46146580e-20,  1.80147721e-03, -2.73464241e-01).finished();
+    -6.51955800e-21,  2.15049139e-04, -3.26444593e-02).finished();
 
   const auto cam_intrinsics = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>(wide_camera ? ecam_intrinsic_matrix.v : fcam_intrinsic_matrix.v);
   static const mat3 yuv_transform = get_model_yuv_transform();
 
   auto ground_from_model_frame = bigmodel_frame ? ground_from_sbigmodel_frame : ground_from_medmodel_frame;
+  std::cout << "\n";
+  std::cout << extrinsics;
+  std::cout << "\n";
   auto camera_frame_from_road_frame = cam_intrinsics * extrinsics;
   Eigen::Matrix<float, 3, 3> camera_frame_from_ground;
   camera_frame_from_ground.col(0) = camera_frame_from_road_frame.col(0);
@@ -122,6 +125,29 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
       model_transform_main = update_calibration(extrinsic_matrix_eigen, main_wide_camera, false);
       model_transform_extra = update_calibration(extrinsic_matrix_eigen, true, true);
       live_calib_seen = true;
+      std::cout << "\n";
+      std::cout << "\n";
+      std::cout << "\n";
+      std::cout << model_transform_main.v[0];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[1];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[2];
+      std::cout << "\n";
+      std::cout << model_transform_main.v[3];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[4];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[5];
+      std::cout << "\n";
+      std::cout << model_transform_main.v[6];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[7];
+      std::cout << ", ";
+      std::cout << model_transform_main.v[8];
+      std::cout << "\n";
+      std::cout << "\n";
+      std::cout << "\n";
     }
 
     float vec_desire[DESIRE_LEN] = {0};
