@@ -288,6 +288,13 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 12.069
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
+    elif candidate == CAR.GENESIS_GV70:
+      ret.mass = 1950. + STD_CARGO_KG
+      ret.wheelbase = 2.87
+      ret.steerRatio = 14.6 * 1.15  # 15% higher at the center seems reasonable
+      tire_stiffness_factor = 0.65
+      ret.steerActuatorDelay = 0.11
+      CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
     # panda safety config
     if candidate in CANFD_CAR:
@@ -298,6 +305,9 @@ class CarInterface(CarInterfaceBase):
       if 0x50 in fingerprint[6]:
         ret.flags |= HyundaiFlags.CANFD_HDA2.value
         ret.safetyConfigs[1].safetyParam |= Panda.FLAG_HYUNDAI_CANFD_HDA2
+      elif candidate == CAR.GENESIS_GV70:
+        ret.flags |= HyundaiFlags.CANFD_GENESIS_HDA1.value
+        ret.safetyConfigs[1].safetyParam |= Panda.FLAG_CANFD_GENESIS_HDA1
       else:
         # non-HDA2
         if 0x1cf not in fingerprint[4]:

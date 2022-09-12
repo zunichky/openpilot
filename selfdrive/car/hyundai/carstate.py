@@ -140,8 +140,13 @@ class CarState(CarStateBase):
       ret.gas = cp.vl["ACCELERATOR"]["ACCELERATOR_PEDAL"] / 255.
     else:
       ret.gas = cp.vl["ACCELERATOR_ALT"]["ACCELERATOR_PEDAL"] / 1023.
-    ret.gasPressed = ret.gas > 1e-5
-    ret.brakePressed = cp.vl["BRAKE"]["BRAKE_PRESSED"] == 1
+    
+    if self.CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1:
+      ret.gasPressed = cp.vl["ACCELERATOR_ALT"]["ACCELERATOR_PEDAL_PRESSED"] == 1
+      ret.brakePressed = cp.vl["ACCELERATOR_ALT"]["BRAKE_PRESSED"] == 1
+    else:
+      ret.gasPressed = ret.gas > 1e-5
+      ret.brakePressed = cp.vl["BRAKE"]["BRAKE_PRESSED"] == 1
 
     ret.doorOpen = cp.vl["DOORS_SEATBELTS"]["DRIVER_DOOR_OPEN"] == 1
     ret.seatbeltUnlatched = cp.vl["DOORS_SEATBELTS"]["DRIVER_SEATBELT_LATCHED"] == 0
@@ -177,9 +182,10 @@ class CarState(CarStateBase):
     ret.cruiseState.standstill = cp_cruise_info.vl["CRUISE_INFO"]["CRUISE_STANDSTILL"] == 1
 
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
+    counter_msg = "_COUNTER" if self.CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1 else "COUNTER"
     self.cruise_buttons.extend(cp.vl_all[cruise_btn_msg]["CRUISE_BUTTONS"])
     self.main_buttons.extend(cp.vl_all[cruise_btn_msg]["ADAPTIVE_CRUISE_MAIN_BTN"])
-    self.buttons_counter = cp.vl[cruise_btn_msg]["COUNTER"]
+    self.buttons_counter = cp.vl[cruise_btn_msg][counter_msg]
     self.cruise_info_copy = copy.copy(cp_cruise_info.vl["CRUISE_INFO"])
 
     if self.CP.flags & HyundaiFlags.CANFD_HDA2:
@@ -380,6 +386,7 @@ class CarState(CarStateBase):
   def get_can_parser_canfd(CP):
 
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
+    counter_msg = "_COUNTER" if CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1 else "COUNTER"
     signals = [
       ("WHEEL_SPEED_1", "WHEEL_SPEEDS"),
       ("WHEEL_SPEED_2", "WHEEL_SPEEDS"),
@@ -387,7 +394,6 @@ class CarState(CarStateBase):
       ("WHEEL_SPEED_4", "WHEEL_SPEEDS"),
 
       ("GEAR", "GEAR_SHIFTER"),
-      ("BRAKE_PRESSED", "BRAKE"),
 
       ("STEERING_RATE", "STEERING_SENSORS"),
       ("STEERING_ANGLE", "STEERING_SENSORS"),
@@ -395,7 +401,7 @@ class CarState(CarStateBase):
       ("STEERING_OUT_TORQUE", "MDPS"),
 
       ("CRUISE_ACTIVE", "SCC1"),
-      ("COUNTER", cruise_btn_msg),
+      (counter_msg, cruise_btn_msg),
       ("CRUISE_BUTTONS", cruise_btn_msg),
       ("ADAPTIVE_CRUISE_MAIN_BTN", cruise_btn_msg),
 
@@ -411,7 +417,6 @@ class CarState(CarStateBase):
     checks = [
       ("WHEEL_SPEEDS", 100),
       ("GEAR_SHIFTER", 100),
-      ("BRAKE", 100),
       ("STEERING_SENSORS", 100),
       ("MDPS", 100),
       ("SCC1", 50),
@@ -420,6 +425,14 @@ class CarState(CarStateBase):
       ("BLINKERS", 4),
       ("DOORS_SEATBELTS", 4),
     ]
+
+    if not (CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1):
+      signals += [
+        ("BRAKE_PRESSED", "BRAKE"),
+      ]
+      checks += [
+        ("BRAKE", 100),
+      ]
 
     if CP.flags & HyundaiFlags.CANFD_HDA2:
       signals += [
@@ -433,6 +446,11 @@ class CarState(CarStateBase):
         ("ACCELERATOR", 100),
       ]
     else:
+      if CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1:
+        signals += [
+          ("BRAKE_PRESSED", "ACCELERATOR_ALT"),
+          ("ACCELERATOR_PEDAL_PRESSED", "ACCELERATOR_ALT"),
+        ]
       signals += [
         ("ACCELERATOR_PEDAL", "ACCELERATOR_ALT"),
       ]
@@ -470,4 +488,5 @@ class CarState(CarStateBase):
         ("CRUISE_INFO", 50),
       ]
 
-    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 6)
+    bus = 4 if CP.flags & HyundaiFlags.CANFD_GENESIS_HDA1 else 6
+    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, bus)
