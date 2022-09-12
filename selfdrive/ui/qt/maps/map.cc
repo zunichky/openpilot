@@ -486,9 +486,9 @@ void MapInstructions::updateInstructions(cereal::NavInstruction::Reader instruct
     // for rhd, reflect direction and then flip
     if (is_rhd) {
       if (fn.contains("left")) {
-        fn.replace("left", "right");
+        fn.replace(QString("left"), QString("right"));
       } else if (fn.contains("right")) {
-        fn.replace("right", "left");
+        fn.replace(QString("right"), QString("left"));
       }
     }
 

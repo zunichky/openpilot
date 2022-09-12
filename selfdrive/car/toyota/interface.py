@@ -230,10 +230,11 @@ class CarInterface(CarInterfaceBase):
     # to a negative value, so it won't matter.
     ret.minEnableSpeed = -1. if (stop_and_go or ret.enableGasInterceptor) else MIN_ACC_SPEED
 
-    if candidate in TSS2_CAR or ret.enableGasInterceptor:
+    if ret.enableGasInterceptor:
+      set_long_tune(ret.longitudinalTuning, LongTunes.PEDAL)
+    elif candidate in TSS2_CAR:
       set_long_tune(ret.longitudinalTuning, LongTunes.TSS2)
-      if candidate in TSS2_CAR:
-        ret.stoppingDecelRate = 0.3 # reach stopping target smoothly
+      ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
     else:
       set_long_tune(ret.longitudinalTuning, LongTunes.TSS)
 

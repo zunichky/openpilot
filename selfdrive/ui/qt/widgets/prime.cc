@@ -18,24 +18,21 @@
 using qrcodegen::QrCode;
 
 PairingQRWidget::PairingQRWidget(QWidget* parent) : QWidget(parent) {
-  timer = new QTimer(this);
+  QTimer* timer = new QTimer(this);
+  timer->start(5 * 60 * 1000);
   connect(timer, &QTimer::timeout, this, &PairingQRWidget::refresh);
 }
 
 void PairingQRWidget::showEvent(QShowEvent *event) {
   refresh();
-  timer->start(5 * 60 * 1000);
-}
-
-void PairingQRWidget::hideEvent(QHideEvent *event) {
-  timer->stop();
 }
 
 void PairingQRWidget::refresh() {
-  QString pairToken = CommaApi::create_jwt({{"pair", true}});
-  QString qrString = "https://connect.comma.ai/?pair=" + pairToken;
-  this->updateQrCode(qrString);
-  update();
+  if (isVisible()) {
+    QString pairToken = CommaApi::create_jwt({{"pair", true}});
+    QString qrString = "https://connect.comma.ai/?pair=" + pairToken;
+    this->updateQrCode(qrString);
+  }
 }
 
 void PairingQRWidget::updateQrCode(const QString &text) {

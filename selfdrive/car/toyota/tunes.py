@@ -2,8 +2,9 @@
 from enum import Enum
 
 class LongTunes(Enum):
-  TSS2 = 0
-  TSS = 1
+  PEDAL = 0
+  TSS2 = 1
+  TSS = 2
 
 class LatTunes(Enum):
   INDI_PRIUS = 0
@@ -27,7 +28,7 @@ class LatTunes(Enum):
 ###### LONG ######
 def set_long_tune(tune, name):
   # Improved longitudinal tune
-  if name == LongTunes.TSS2:
+  if name == LongTunes.TSS2 or name == LongTunes.PEDAL:
     tune.deadzoneBP = [0., 8.05]
     tune.deadzoneV = [.0, .14]
     tune.kpBP = [0., 5., 20.]
